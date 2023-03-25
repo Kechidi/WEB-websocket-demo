@@ -22,14 +22,23 @@
     <title>Simple Chat App</title>
   </head>
   <body>
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-    <div id="root"></div>
-      <header><p>???</p></header>
-      <ul id="messages"></ul>
-      <form action="">
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+  <div id="root"></div>
+  <header><p>???</p></header>
+  <!-- Ajout canvas -->
+  <div id="main">
+    <section id="section">
+      <aside id="aside">
+        <ul id="messages"></ul>
+      </aside>
+
+      <canvas id="canvas"  width="300" height="300"></canvas>
+    </section>
+    <form action="">
       &#10093; <input autofocus autocomplete="off" placeholder="Send a message"/>
-      </form>
+    </form>
+  </div>
   </body>
 </html>
