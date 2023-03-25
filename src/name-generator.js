@@ -4,15 +4,14 @@
  * 
  * Génère des noms avec adjectifs aléatoires dans le style des noms de distributions Ubuntu.
  */
-
 import isDef from './is-def'
 
-var nouns = ['Circle', 'Cone', 'Cylinder', 'Ellipse', 'Hexagon', 'Irregular Shape', 'Octagon', 'Oval', 'Parallelogram', 'Pentagon', 'Pyramid', 'Rectangle', 'Semicircle', 'Sphere', 'Square', 'Star', 'Trapezoid', 'Triangle', 'Wedge', 'Whorl'];
-var adjectives = ['Amusing', 'Athletic', 'Beautiful', 'Brave', 'Careless', 'Clever', 'Crafty', 'Creative', 'Cute', 'Dependable', 'Energetic', 'Famous', 'Friendly', 'Graceful', 'Helpful', 'Humble', 'Inconsiderate', 'Likable', 'Middle Class', 'Outgoing', 'Poor', 'Practical', 'Rich', 'Sad', 'Skinny', 'Successful', 'Thin', 'Ugly', 'Wealth'];
+var prenoms = ['Emma', 'Liam', 'Ava', 'Noah', 'Sophia', 'Oliver', 'Isabella', 'Elijah', 'Charlotte', 'William'];
+var nomsDeFamille = ['Martin', 'Bernard', 'Dubois', 'Thomas', 'Robert', 'Richard', 'Petit', 'Durand', 'Leroy', 'Moreau'];
 
 export default (random) => {
     random = isDef(random) ? random : Math.random;
-    return  adjectives[Math.floor(Math.random() * adjectives.length)] 
-            + ' ' 
-            + nouns[Math.floor(Math.random() * nouns.length)];
+    return  nomsDeFamille[Math.floor(Math.random() * nomsDeFamille.length)]
+        + ' '
+        + prenoms[Math.floor(Math.random() * prenoms.length)];
 }
