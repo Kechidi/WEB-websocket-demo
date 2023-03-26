@@ -34,7 +34,6 @@ wss.on('connection', function(client, request) {
 
   // Register a listener on each message of each connection
   client.on('message', function(message) {
-
     if (message.includes("F-HDR};R`oTayx=8Hs4")) {
       nbCanvas++;
       wss.broadcast(message);
@@ -46,6 +45,7 @@ wss.on('connection', function(client, request) {
       console.log("message from", cli);
       // when receiving a message, broadcast it to all the connected clients
       wss.broadcast(cli + message);
+    }
   });
 });
 
