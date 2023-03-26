@@ -35,10 +35,17 @@ wss.on('connection', function(client, request) {
   // Register a listener on each message of each connection
   client.on('message', function(message) {
 
-    var cli = '[' + decodeURIComponent(wsname) + '] ';
-    console.log("message from", cli);
-    // when receiving a message, broadcast it to all the connected clients
-    wss.broadcast(cli + message);
+    if (message.includes("F-HDR};R`oTayx=8Hs4")) {
+      nbCanvas++;
+      wss.broadcast(message);
+    } else if (message.includes("RLfPPLof;NQo$S4@D[N")) {
+      tab.push(message);
+      wss.broadcast(message);
+    } else {
+      var cli = '[' + decodeURIComponent(wsname) + '] ';
+      console.log("message from", cli);
+      // when receiving a message, broadcast it to all the connected clients
+      wss.broadcast(cli + message);
   });
 });
 
