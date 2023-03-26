@@ -1,7 +1,7 @@
 import './index.css';
 import nameGenerator from './name-generator';
 import isDef from './is-def';
-  
+import{mousedownEvent,mousemoveEvent,mouseupEvent}  from "./mouse-event";
   
 
 // Store/retrieve the name in/from a cookie.
@@ -18,12 +18,13 @@ if (isDef(wsname)) {
   document.cookie = "wsname=" + encodeURIComponent(wsname);
 }
 
+export let color;
 // Set the name in the header
 document.querySelector('header>p').textContent = decodeURIComponent(wsname);
 
 // Create a WebSocket connection to the server
 // const ws = new WebSocket("ws://" + window.location.host+ "/socket");
-const ws = new WebSocket("ws://localhost:1234");
+export const ws = new WebSocket("ws://localhost:1234");
 
 // We get notified once connected to the server
 ws.onopen = (event) => {
@@ -49,6 +50,12 @@ function sendMessage(event) {
     sendInput.value = '';
   }
 }
+
+// Gestionnaires d'évènements
+canvas.addEventListener("mousedown", e => mousedownEvent(e));
+canvas.addEventListener("mousemove", e => mousemoveEvent(e));
+window.addEventListener("mouseup", e => mouseupEvent(e));
+
 const sendForm = document.querySelector('form');
 const sendInput = document.querySelector('form input');
 sendForm.addEventListener('submit', sendMessage, true);
