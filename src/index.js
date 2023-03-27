@@ -19,27 +19,34 @@ if (isDef(wsname)) {
   document.cookie = "wsname=" + encodeURIComponent(wsname);
 }
 
-export let color;
+export let color = cookies.find(function(c) {
+  if (c.match(/color/) !== null) return true;
+  return false;
+});
+if (isDef(color)) {
+  color = "#" + color.split("%")[1];
+} else {
+  color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+  document.cookie = "color=" + encodeURIComponent(color);
+}
+
 // Set the name in the header
 document.querySelector('header>p').textContent = decodeURIComponent(wsname);
 
 // Create a WebSocket connection to the server
-// const ws = new WebSocket("ws://" + window.location.host+ "/socket");
-export const ws = new WebSocket("ws://localhost:1234");
+export const ws = new WebSocket("ws://" + window.location.host + "/socket");
 
 // We get notified once connected to the server
 ws.onopen = (event) => {
   console.log("We are connected.");
 };
-
+let line;
 let idCanvas;
 // Listen to messages coming from the server. When it happens, create a new <li> and append it to the DOM.
-const messages = document.querySelector('#messages');
-let line;
 ws.onmessage = event => {
   if (event.data.includes("RLfPPLof;NQo$S4@D[N")) {
     var parsedDrawing = JSON.parse(
-        event.data.substring(event.data.indexOf("{"))
+      event.data.substring(event.data.indexOf("{"))
     );
     draw(parsedDrawing);
   } else if (event.data.includes("F-HDR};R`oTayx=8Hs4")) {
@@ -77,7 +84,6 @@ function sendMessage(event) {
     sendInput.value = '';
   }
 }
-
 // Gestionnaires d'évènements
 canvas.addEventListener("mousedown", e => mousedownEvent(e));
 canvas.addEventListener("mousemove", e => mousemoveEvent(e));
