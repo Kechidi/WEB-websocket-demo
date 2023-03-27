@@ -18,17 +18,22 @@ wss.broadcast = function broadcast(message) {
     client.send(message);
   });
 };
-
+let nbCanvas = 1;
+let tab = [];
 // Register a listener for new connections on the WebSocket.
 wss.on('connection', function(client, request) {
+    client.send(JSON.stringify({ key: "F-HDR};R`oTayx=8Hs4", idCanvas: 1 }));
 
+  tab.forEach(dessin => {
+    client.send(dessin);
+  });
   // retrieve the name in the cookies
   var cookies = request.headers.cookie.split(';');
   var wsname = cookies.find((c) => {
     return c.match(/^\s*wsname/) !== null;
   });
   wsname = wsname.split('=')[1];
-  console.log("first connexion from", wsname);
+
   // greet the newly connected user
   client.send('Welcome, ' + decodeURIComponent(wsname) + '!');
 
