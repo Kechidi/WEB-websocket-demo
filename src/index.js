@@ -2,7 +2,8 @@ import './index.css';
 import nameGenerator from './name-generator';
 import isDef from './is-def';
 import{mousedownEvent,mousemoveEvent,mouseupEvent}  from "./mouse-event";
-  
+import {draw,afficheCanvas,canvas,context} from "./draw"
+import {messages,aside,room,zoneDessin } from "./Variable";
 
 // Store/retrieve the name in/from a cookie.
 const cookies = document.cookie.split(';');
@@ -31,14 +32,40 @@ ws.onopen = (event) => {
   console.log("We are connected.");
 };
 
+let idCanvas;
 // Listen to messages coming from the server. When it happens, create a new <li> and append it to the DOM.
 const messages = document.querySelector('#messages');
 let line;
-ws.onmessage = (event) => {
-  line = document.createElement('li');
-  line.textContent = event.data;
-  messages.appendChild(line);
+ws.onmessage = event => {
+  if (event.data.includes("RLfPPLof;NQo$S4@D[N")) {
+    var parsedDrawing = JSON.parse(
+        event.data.substring(event.data.indexOf("{"))
+    );
+    draw(parsedDrawing);
+  } else if (event.data.includes("F-HDR};R`oTayx=8Hs4")) {
+    let id = JSON.parse(event.data.substring(event.data.indexOf("{")));
+    room.setAttribute("type", "button");
+    room.setAttribute("id", "dessin" + id.idCanvas);
+    room.setAttribute("value", "Dessin " + id.idCanvas);
+    zoneDessin.setAttribute("id", "canvas" + id.idCanvas);
+    zoneDessin.setAttribute("width", 1000);
+    zoneDessin.setAttribute("height", 1000);
+    zoneDessin.className = "classcanvas";
+    zoneDessin.addEventListener("mousedown", e => mousedownEvent(e));
+    zoneDessin.addEventListener("mousemove", e => mousemoveEvent(e));
+    document.getElementById("section").appendChild(zoneDessin);
+    listeCanvas.push(zoneDessin);
+    room.addEventListener("click", e => afficheCanvas(e));
+    idCanvas = id.idCanvas++;
+  } else {
+    line = document.createElement("li");
+    line.textContent = event.data;
+    messages.appendChild(line);
+    aside.scrollTop = aside.scrollHeight;
+  }
 };
+
+
 
 // Retrieve the input element. Add listeners in order to send the content of the input when the "return" key is pressed.
 function sendMessage(event) {
