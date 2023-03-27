@@ -3,7 +3,7 @@ import nameGenerator from './name-generator';
 import isDef from './is-def';
 import{mousedownEvent,mousemoveEvent,mouseupEvent}  from "./mouse-event";
 import {draw,afficheCanvas,canvas,context} from "./draw"
-import {messages,aside,room,zoneDessin } from "./Variable";
+import {messages,aside,room,zoneDessin,listeCanvas} from "./Variable";
 
 // Store/retrieve the name in/from a cookie.
 const cookies = document.cookie.split(';');
