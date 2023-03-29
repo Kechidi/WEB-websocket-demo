@@ -1,48 +1,52 @@
-import './index.css';
-import nameGenerator from './name-generator';
-import isDef from './is-def';
-import{mousedownEvent,mousemoveEvent,mouseupEvent}  from "./mouse-event";
-import {draw,afficheCanvas,canvas,context} from "./draw"
-import {messages,aside,room,zoneDessin,listeCanvas} from "./Variable";
+import "./index.css";
+import nameGenerator from "./name-generator";
+import isDef from "./is-def";
+import {draw,createCanvasElement} from "./draw";
+import { mousedownEvent,mousemoveEvent,mouseupEvent } from "./mouse-event";
+import { messages,aside ,listeCanvas,canvas,sendInput,sendForm,newDrawingButton} from "./Variable";
 
-// Store/retrieve the name in/from a cookie.
-const cookies = document.cookie.split(';');
-console.log(cookies)
+
+
+export let color = getCookie("color");
+export const ws = new WebSocket("ws://" + window.location.host + "/socket");
+let line;
+let idCanvas;
+const cookies = document.cookie.split(";");
 let wsname = cookies.find(function(c) {
   if (c.match(/wsname/) !== null) return true;
   return false;
 });
+
+
+
 if (isDef(wsname)) {
-  wsname = wsname.split('=')[1];
+  wsname = wsname.split("=")[1];
 } else {
   wsname = nameGenerator();
   document.cookie = "wsname=" + encodeURIComponent(wsname);
 }
-
-export let color = cookies.find(function(c) {
-  if (c.match(/color/) !== null) return true;
-  return false;
-});
-if (isDef(color)) {
-  color = "#" + color.split("%")[1];
+if (color) {
+  color = "#" + color;
+  // Vérification supplémentaire pour s'assurer que la couleur est au format correct.
+  if (!/^#[0-9A-F]{6}$/i.test(color)) {
+    color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    document.cookie = "color=" + color.substring(1);
+  }
 } else {
   color = "#" + Math.floor(Math.random() * 16777215).toString(16);
-  document.cookie = "color=" + encodeURIComponent(color);
+  document.cookie = "color=" + color.substring(1);
 }
 
-// Set the name in the header
-document.querySelector('header>p').textContent = decodeURIComponent(wsname);
 
-// Create a WebSocket connection to the server
-export const ws = new WebSocket("ws://" + window.location.host + "/socket");
 
-// We get notified once connected to the server
-ws.onopen = (event) => {
+
+document.querySelector("header>p").textContent = decodeURIComponent(wsname);
+ws.onopen = event => {
   console.log("We are connected.");
 };
-let line;
-let idCanvas;
-// Listen to messages coming from the server. When it happens, create a new <li> and append it to the DOM.
+
+
+
 ws.onmessage = event => {
   if (event.data.includes("RLfPPLof;NQo$S4@D[N")) {
     var parsedDrawing = JSON.parse(
@@ -51,19 +55,10 @@ ws.onmessage = event => {
     draw(parsedDrawing);
   } else if (event.data.includes("F-HDR};R`oTayx=8Hs4")) {
     let id = JSON.parse(event.data.substring(event.data.indexOf("{")));
-    room.setAttribute("type", "button");
-    room.setAttribute("id", "dessin" + id.idCanvas);
-    room.setAttribute("value", "Dessin " + id.idCanvas);
-    zoneDessin.setAttribute("id", "canvas" + id.idCanvas);
-    zoneDessin.setAttribute("width", 1000);
-    zoneDessin.setAttribute("height", 1000);
-    zoneDessin.className = "classcanvas";
-    zoneDessin.addEventListener("mousedown", e => mousedownEvent(e));
-    zoneDessin.addEventListener("mousemove", e => mousemoveEvent(e));
-    document.getElementById("section").appendChild(zoneDessin);
-    listeCanvas.push(zoneDessin);
-    room.addEventListener("click", e => afficheCanvas(e));
+
+    createCanvasElement(id.idCanvas);
     idCanvas = id.idCanvas++;
+
   } else {
     line = document.createElement("li");
     line.textContent = event.data;
@@ -74,23 +69,34 @@ ws.onmessage = event => {
 
 
 
-// Retrieve the input element. Add listeners in order to send the content of the input when the "return" key is pressed.
-function sendMessage(event) {
-  event.preventDefault();
-  event.stopPropagation();
-  if (sendInput.value !== '') {
-    // Send data through the WebSocket
-    ws.send(sendInput.value);
-    sendInput.value = '';
-  }
-}
-// Gestionnaires d'évènements
+listeCanvas.push(canvas);
 canvas.addEventListener("mousedown", e => mousedownEvent(e));
 canvas.addEventListener("mousemove", e => mousemoveEvent(e));
 window.addEventListener("mouseup", e => mouseupEvent(e));
+newDrawingButton.addEventListener("click", () => {
+  const newDrawing = { key: "F-HDR};R`oTayx=8Hs4", idCanvas: idCanvas + 1 };
+  ws.send(JSON.stringify(newDrawing));
+});
+sendForm.addEventListener("submit", sendMessage, true);
+sendForm.addEventListener("blur", sendMessage, true);
 
-const sendForm = document.querySelector('form');
-const sendInput = document.querySelector('form input');
-sendForm.addEventListener('submit', sendMessage, true);
-sendForm.addEventListener('blur', sendMessage, true);
 
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop().split(";").shift();
+  }
+}
+
+
+function sendMessage(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  if (sendInput.value !== "") {
+    // Send data through the WebSocket
+    ws.send(sendInput.value);
+    sendInput.value = "";
+  }
+}

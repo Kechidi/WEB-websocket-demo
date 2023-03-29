@@ -20,13 +20,18 @@ wss.broadcast = function broadcast(message) {
 };
 let nbCanvas = 1;
 let tab = [];
-// Register a listener for new connections on the WebSocket.
-wss.on('connection', function(client, request) {
-    client.send(JSON.stringify({ key: "F-HDR};R`oTayx=8Hs4", idCanvas: 1 }));
+let activeDrawings = [];
 
+
+// Register a listener for new connections on the WebSocket.
+wss.on('connection', function (client, request) {
+  client.send(JSON.stringify({ key: "F-HDR};R`oTayx=8Hs4", idCanvas: 1 }));
+
+  sendCanvasList(client);
   tab.forEach(dessin => {
     client.send(dessin);
   });
+  
   // retrieve the name in the cookies
   var cookies = request.headers.cookie.split(';');
   var wsname = cookies.find((c) => {
@@ -38,10 +43,12 @@ wss.on('connection', function(client, request) {
   client.send('Welcome, ' + decodeURIComponent(wsname) + '!');
 
   // Register a listener on each message of each connection
-  client.on('message', function(message) {
+  client.on('message', function (message) {
     if (message.includes("F-HDR};R`oTayx=8Hs4")) {
       nbCanvas++;
-      wss.broadcast(message);
+      let drawingInfo = { key: "F-HDR};R`oTayx=8Hs4", idCanvas: nbCanvas };
+      activeDrawings.push(drawingInfo);
+      wss.broadcast(JSON.stringify(drawingInfo));
     } else if (message.includes("RLfPPLof;NQo$S4@D[N")) {
       tab.push(message);
       wss.broadcast(message);
@@ -56,10 +63,16 @@ wss.on('connection', function(client, request) {
 
 
 // http sever starts listening on given host and port.
-server.listen(port, host, function() {
+server.listen(port, host, function () {
   console.log('Listening on ' + server.address().address + ':' + server.address().port);
 });
 
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
   process.exit(0);
 });
+
+function sendCanvasList(client) {
+  activeDrawings.forEach((drawingInfo) => {
+    client.send(JSON.stringify(drawingInfo));
+  });
+}

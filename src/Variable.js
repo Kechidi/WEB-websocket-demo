@@ -1,5 +1,12 @@
 export const messages = document.querySelector("#messages");
 export const aside = document.querySelector("#aside");
-export const room = document.createElement("input");
-export const zoneDessin = document.createElement("canvas");
-export const listeCanvas=[];
+export let listeCanvas = [];
+export let isDrawing = false;
+export let x = 0;
+export let y = 0;
+export const canvas = document.getElementById("canvas");
+export const context = canvas.getContext("2d");
+export const rect = canvas.getBoundingClientRect();
+export const sendForm = document.querySelector("form");
+export const sendInput = document.querySelector("form input");
+export const newDrawingButton = document.getElementById("new-drawing");
